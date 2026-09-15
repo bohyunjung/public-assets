@@ -6,13 +6,25 @@
 
 파일 `blog/example.png` 기준:
 
-| 방식 | URL |
-| --- | --- |
-| GitHub Pages (기본) | `https://bohyunjung.github.io/public-assets/blog/example.png` |
-| raw (fallback) | `https://raw.githubusercontent.com/bohyunjung/public-assets/main/blog/example.png` |
+| 방식 | URL | 캐시 |
+| --- | --- | --- |
+| **GitHub Pages** (기본) | `https://bohyunjung.github.io/public-assets/blog/example.png` | `max-age=600` |
+| jsDelivr (캐시 중요할 때) | `https://cdn.jsdelivr.net/gh/bohyunjung/public-assets@main/blog/example.png` | `max-age=604800` |
+| raw (임시/fallback) | `https://raw.githubusercontent.com/bohyunjung/public-assets/main/blog/example.png` | `max-age=300` |
 
-Pages 쪽이 Fastly CDN을 타고 캐시 헤더도 제대로 붙으니 기본으로 쓴다.
-raw는 Pages 빌드를 기다리기 싫을 때나 임시로만.
+기본은 Pages. Fastly CDN을 타고 `content-type`, `access-control-allow-origin: *` 다 제대로 붙는다.
+
+jsDelivr는 캐시가 훨씬 길다. `@main` 대신 커밋 SHA를 박으면
+(`@57b2e2b/blog/example.png`) immutable로 잡혀서 무효화 걱정이 없다.
+
+raw는 Pages 빌드(30초~1분)를 기다리기 싫을 때만.
+
+> **주의 — Pages 경로가 살아있는 이유**
+> `bohyunjung.github.io/<repo>/` 형태의 프로젝트 페이지는, 유저 페이지
+> (`bohyunjung.github.io` 레포)에 커스텀 도메인이 걸려 있으면 **전부** 그 도메인으로
+> 301 리다이렉트되어 막힌다. 그래서 그쪽 `cname` 설정을 제거하고 `gh-pages` 브랜치의
+> 리다이렉트 shim으로 대체해 둔 상태다. 거기에 커스텀 도메인을 다시 걸면
+> 이 레포의 Pages URL은 즉시 전부 깨진다. 그땐 jsDelivr나 raw로 갈아타야 한다.
 
 ## 디렉토리
 
